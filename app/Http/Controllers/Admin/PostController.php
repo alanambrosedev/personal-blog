@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -12,7 +13,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::with('category')->paginate(20);
+
+        return view('admin.posts.index', ['posts' => $posts]);
     }
 
     /**
@@ -36,7 +39,9 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $post = Post::with('tags', 'user')->findOrFail($id);
+
+        return view('admin.posts.show', ['post' => $post]);
     }
 
     /**
