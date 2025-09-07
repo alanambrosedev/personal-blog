@@ -1,8 +1,26 @@
-@props(['disabled' => false, 'options' => []])
+@props([
+    'id' => null,
+    'name',
+    'options' => [],
+    'selected' => null,
+    'multiple' => false,
+    'class' => '',
+    'placeholder' => '',
+])
 
-<select @disabled($disabled)
-    {{ $attributes->merge(['class' => 'border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm']) }}>
+
+<select id="{{ $id ?? $name }}" name="{{ $name }}{{ $multiple ? '[]' : '' }}"
+    {{ $attributes->merge(['class' => $class]) }} @if ($multiple) multiple @endif>
+    @if ($placeholder && !$multiple)
+        <option value="">{{ $placeholder }}</option>
+    @endif
+
     @foreach ($options as $option)
-        <option value="{{ $option->id }}">{{ $option->name }}</option>
+        <option value="{{ $option->id }}"
+            @if ($multiple) {{ in_array($option->id, (array) $selected) ? 'selected' : '' }}
+            @else
+                {{ $selected == $option->id ? 'selected' : '' }} @endif>
+            {{ $option->name }}
+        </option>
     @endforeach
 </select>

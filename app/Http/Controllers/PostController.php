@@ -10,7 +10,7 @@ class PostController extends Controller
     {
         $posts = Post::with('category')->paginate(20);
 
-        return view('admin.posts.index', ['posts' => $posts]);
+        return view('posts.index', ['posts' => $posts]);
     }
 
     public function show(string $id)

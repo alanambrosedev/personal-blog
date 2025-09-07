@@ -3,68 +3,110 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\CreatePostRequest;
+use App\Http\Requests\Admin\EditPostRequest;
+use App\Models\Category;
 use App\Models\Post;
-use Illuminate\Http\Request;
+use App\Models\Tag;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): View
     {
         $posts = Post::with('category')->paginate(20);
 
-        return view('admin.posts.index', ['posts' => $posts]);
+        return view('admin.posts.index', [
+            'posts' => $posts,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(): View
     {
-        //
+        $categories = Category::all();
+
+        return view('admin.posts.create', [
+            'categories' => $categories,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(CreatePostRequest $request)
     {
-        //
+        $tags = explode(',', $request->input('tags'));
+
+        if ($request->has('image')) {
+            $filename = time().'_'.$request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('uploads', $filename, 'public');
+        }
+
+        $post = auth()->user()->posts()->create([
+            'title' => $request->string('title'),
+            'image' => $filename ?? null,
+            'post' => $request->string('post'),
+            'category_id' => $request->integer('category'),
+        ]);
+
+        foreach ($tags as $tagName) {
+            $tag = Tag::firstOrCreate(['name' => $tagName]);
+            $post->tags()->attach($tag);
+        }
+
+        return redirect()->route('admin.posts.index')
+            ->with('status', 'Post created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Post $post): View
     {
-        $post = Post::with('tags', 'user')->findOrFail($id);
+        $categories = Category::all();
+        $tags = $post->tags->implode('name', ', ');
 
-        return view('admin.posts.show', ['post' => $post]);
+        return view('admin.posts.edit', [
+            'post' => $post,
+            'tags' => $tags,
+            'categories' => $categories,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(EditPostRequest $request, Post $post)
     {
-        //
+        $tags = explode(',', $request->input('tags'));
+
+        if ($request->has('image')) {
+            Storage::delete('public/uploads/'.$post->image);
+
+            $filename = time().'_'.$request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('uploads', $filename, 'public');
+        }
+
+        $post->update([
+            'title' => $request->string('title'),
+            'image' => $filename ?? $post->image,
+            'post' => $request->string('post'),
+            'category_id' => $request->integer('category'),
+        ]);
+
+        $newTags = [];
+        foreach ($tags as $tagName) {
+            $tag = Tag::firstOrCreate(['name' => $tagName]);
+            array_push($newTags, $tag->id);
+        }
+        $post->tags()->sync($newTags);
+
+        return redirect()->route('admin.posts.index')
+            ->with('status', 'Post updated successfully.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Post $post)
     {
-        //
-    }
+        if ($post->image) {
+            Storage::delete('public/uploads/'.$post->image);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $post->tags()->detach();
+        $post->delete();
+
+        return redirect()->route('admin.posts.index')
+            ->with('status', 'Post deleted successfully.');
     }
 }
