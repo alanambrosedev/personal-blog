@@ -13,16 +13,16 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
-                        {{ __('Dashboard') }}
+                        Dashboard
                     </x-nav-link>
                     <x-nav-link :href="route('admin.posts.index')" :active="request()->routeIs('admin.posts.*')">
-                        {{ __('Posts') }}
+                        Posts
                     </x-nav-link>
                     <x-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
-                        {{ __('Categories') }}
+                        Categories
                     </x-nav-link>
                     <x-nav-link :href="route('admin.tags.index')" :active="request()->routeIs('admin.tags.*')">
-                        {{ __('Tags') }}
+                        Tags
                     </x-nav-link>
                 </div>
             </div>
