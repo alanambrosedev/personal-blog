@@ -15,9 +15,9 @@ Route::get('/', function () {
     return view('pages.home', ['posts' => $posts]);
 })->name('home');
 
-Route::get('posts', [PostController::class, 'index'])->name('posts.index');
-Route::get('posts/{id}', [PostController::class, 'show'])->name('posts.show');
-Route::view('about', 'pages.about')->name('about');
+Route::get('posts', [PostController::class, 'index'])->name('posts.index'); // posts
+Route::get('posts/{post}', [PostController::class, 'show'])->name('posts.show'); // posts/1
+Route::view('about', 'pages.about')->name('about'); // posts/about
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -31,9 +31,14 @@ Route::middleware('auth')->group(function () {
 
 Route::group(['middleware' => 'auth', 'prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::view('/', 'dashboard')->name('dashboard');
-    Route::resource('categories', Admin\CategoryController::class);
-    Route::resource('tags', Admin\TagController::class);
-    Route::resource('posts', Admin\PostController::class);
+    Route::resource('categories', Admin\CategoryController::class); // admin/categories
+    Route::resource('tags', Admin\TagController::class); // admin/tags
+    Route::resource('posts', Admin\PostController::class); // admin/posts
 });
+if (app()->environment('local')) {
+    Route::group(['middleware' => ['auth', 'setLocale'], 'prefix' => '{locale}/admin', 'as' => 'admin.'], function () {
+        Route::resource('categories', Admin\CategoryController::class); // fi/admin/categories
+    });
+}
 
 require __DIR__.'/auth.php';
