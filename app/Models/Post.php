@@ -28,6 +28,6 @@ class Post extends Model
 
     public function getRouteKeyName()
     {
-        return 'name';
+        return 'title';
     }
 }
