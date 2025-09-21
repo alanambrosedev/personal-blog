@@ -16,7 +16,7 @@ class CategoryController extends Controller
     {
         $categories = Category::latest()->paginate(20);
 
-        return view('admin.categories.index', ['categories' => $categories]);
+        return view('admin.categories.index', compact('categories'));
     }
 
     /**
@@ -42,9 +42,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        return view('admin.categories.edit', [
-            'category' => $category,
-        ]);
+        return view('admin.categories.edit', compact('category'));
     }
 
     /**

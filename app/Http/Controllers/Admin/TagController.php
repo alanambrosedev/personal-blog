@@ -16,7 +16,7 @@ class TagController extends Controller
     {
         $tags = Tag::latest()->paginate(20);
 
-        return view('admin.tags.index', ['tags' => $tags]);
+        return view('admin.tags.index', compact('tags'));
     }
 
     /**
@@ -42,9 +42,7 @@ class TagController extends Controller
      */
     public function edit(Tag $tag)
     {
-        return view('admin.tags.edit', [
-            'tag' => $tag,
-        ]);
+        return view('admin.tags.edit', compact('tag'));
     }
 
     /**

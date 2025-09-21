@@ -16,8 +16,10 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('posts', [PostController::class, 'index'])->name('posts.index'); // posts
-Route::get('posts/{post}', [PostController::class, 'show'])->name('posts.show'); // posts/1
-Route::view('about', 'pages.about')->name('about'); // posts/about
+Route::get('posts/{post:title}', [PostController::class, 'show'])->withTrashed()->name('posts.show'); // posts/{title} since using route model binding use here withTrashed()
+Route::view('about', 'pages.about')->name('about')->missing(function () {
+    return view('posts.index');
+}); // posts/about and if missing redirect to index page
 
 Route::get('/dashboard', function () {
     return view('dashboard');
