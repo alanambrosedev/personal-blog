@@ -15,20 +15,17 @@ class PostController extends Controller
 {
     public function index(): View
     {
-        $posts = Post::with('category')->paginate(20);
+        // $posts = Post::with('category')->paginate(20);
+        $posts = Post::withOptionalCategory(10)->get(); // Conditional Scope using when()
 
-        return view('admin.posts.index', [
-            'posts' => $posts,
-        ]);
+        return view('admin.posts.index', compact('posts'));
     }
 
     public function create(): View
     {
         $categories = Category::all();
 
-        return view('admin.posts.create', [
-            'categories' => $categories,
-        ]);
+        return view('admin.posts.create', compact('categories'));
     }
 
     public function store(CreatePostRequest $request)
@@ -58,14 +55,11 @@ class PostController extends Controller
 
     public function edit(Post $post): View
     {
+        $post->load('tags'); // Use load() when you already have the model but need extra relationships dynamically.
         $categories = Category::all();
         $tags = $post->tags->implode('name', ', ');
 
-        return view('admin.posts.edit', [
-            'post' => $post,
-            'tags' => $tags,
-            'categories' => $categories,
-        ]);
+        return view('admin.posts.edit', compact('tags', 'categories', 'post'));
     }
 
     public function update(EditPostRequest $request, Post $post)
