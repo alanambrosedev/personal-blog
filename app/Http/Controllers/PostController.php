@@ -10,13 +10,13 @@ class PostController extends Controller
     {
         $posts = Post::with('category')->paginate(20);
 
-        return view('posts.index', compact('posts'));
+        return view('posts.index', ['posts' => $posts]);
     }
 
-    public function show(Post $post) // manual key fetching in route binding
+    public function show(string $id)
     {
-        $post->load(['tags', 'user']);
+        $post = Post::with('tags', 'user')->findOrFail($id);
 
-        return view('posts.show', compact('post'));
+        return view('posts.show', ['post' => $post]);
     }
 }
