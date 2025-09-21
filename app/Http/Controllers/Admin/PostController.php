@@ -54,7 +54,7 @@ class PostController extends Controller
 
     public function edit(Post $post): View
     {
-        $post->load('tags'); //Use load() when you already have the model but need extra relationships dynamically.
+        $post->load('tags'); // Use load() when you already have the model but need extra relationships dynamically.
         $categories = Category::all();
         $tags = $post->tags->implode('name', ', ');
 

@@ -13,7 +13,7 @@ class PostController extends Controller
         return view('posts.index', compact('posts'));
     }
 
-    public function show(Post $post) //manual key fetching in route binding
+    public function show(Post $post) // manual key fetching in route binding
     {
         $post->load(['tags', 'user']);
 
