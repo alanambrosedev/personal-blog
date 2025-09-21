@@ -15,7 +15,8 @@ class PostController extends Controller
 {
     public function index(): View
     {
-        $posts = Post::with('category')->paginate(20);
+        // $posts = Post::with('category')->paginate(20);
+        $posts = Post::withOptionalCategory(10)->get(); // Conditional Scope using when()
 
         return view('admin.posts.index', compact('posts'));
     }

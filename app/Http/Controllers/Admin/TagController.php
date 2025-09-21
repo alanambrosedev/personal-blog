@@ -14,7 +14,8 @@ class TagController extends Controller
      */
     public function index()
     {
-        $tags = Tag::latest()->paginate(20);
+        $tags = Tag::active()->ofType('system')->get(); // Chained scopes example
+        // $tags = Tag::latest()->paginate(20);
 
         return view('admin.tags.index', compact('tags'));
     }

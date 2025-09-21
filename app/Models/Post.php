@@ -30,4 +30,22 @@ class Post extends Model
     {
         return 'title';
     }
+
+    public function scopePublished($query)
+    {
+        return $query->where('status', 'published')->where('published_at', '<='.now());
+    }
+
+    public function scopeByCategory($query, $categoryId)
+    {
+        return $query->where('category_id', $categoryId);
+    }
+
+    public function scopeWithOptionalCategory($query, $categoryId = null)
+    {
+        return $query->published()
+            ->when($categoryId, function ($q) use ($categoryId) {
+                $q->where('category_id', $categoryId);
+            });
+    }
 }
