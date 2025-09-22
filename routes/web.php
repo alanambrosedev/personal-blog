@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\EnsureTokenValid;
+use App\Http\Middleware\EnsureUserHasRole;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
@@ -13,7 +15,8 @@ Route::get('/', function () {
         ->get();
 
     return view('pages.home', ['posts' => $posts]);
-})->name('home');
+    // Middleware can take extra arguments.The colon is used to pass arguments to the middleware.
+})->name('home')->middleware(EnsureUserHasRole::class.':editor,publisher');
 
 Route::get('posts', [PostController::class, 'index'])->name('posts.index'); // posts
 Route::get('posts/{post:title}', [PostController::class, 'show'])->withTrashed()->name('posts.show'); // posts/{title} since using route model binding use here withTrashed()
@@ -26,7 +29,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    //Skip middleware for specific routes
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->withoutMiddleware(EnsureTokenValid::class);
+
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
@@ -38,9 +43,11 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin', 'as' => 'admin.'], fu
     Route::resource('posts', Admin\PostController::class); // admin/posts
 });
 if (app()->environment('local')) {
-    Route::group(['middleware' => ['auth', 'setLocale'], 'prefix' => '{locale}/admin', 'as' => 'admin.'], function () {
+    // Middleware Groups Routes
+    Route::group(['middleware' => ['auth-lookup'], 'prefix' => '{locale}/admin', 'as' => 'admin.'], function () {
         Route::resource('categories', Admin\CategoryController::class); // fi/admin/categories
     });
 }
+
 
 require __DIR__.'/auth.php';
