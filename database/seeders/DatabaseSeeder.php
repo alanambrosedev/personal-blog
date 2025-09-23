@@ -17,13 +17,19 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
 
-        Category::factory(10)
-            ->has(Post::factory()->withTags()->count(20))
-            ->create();
+        // Category::factory(10)
+        //     ->has(Post::factory()->withTags()->count(20))
+        //     ->create();
+
+        //seeders run in order
+        $this->call([
+            UserSeeder::class,
+            TagSeeder::class
+        ]);
     }
 }
