@@ -15,18 +15,20 @@ class EnsureUserHasRole
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
 
-    //Middleware can take extra arguments.
+    // Middleware can take extra arguments.
     public function handle(Request $request, Closure $next, string $role): Response
     {
         if (! $request->user()->hasRole($role)) {
             return redirect('/');
         }
+
         return $next($request);
     }
 
     // middleware to work after the response has been sent (like logging).
     public function terminate(Request $request, Response $response)
-    {(
-        Log::info('Request Completed'));
+    {
+        (
+            Log::info('Request Completed'));
     }
 }
