@@ -9,14 +9,14 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__ . '/../routes/web.php',
-        commands: __DIR__ . '/../routes/console.php',
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
         // Middleware Order (Priority)
         $middleware->priority([
-            EnsureUserHasRole::class
+            EnsureUserHasRole::class,
         ]);
         // Lets you use 'setLocale' as a shorthand in route definitions like Route::middleware('setLocale')
         $middleware->alias([
@@ -27,10 +27,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // $middleware->prepend(EnsureTokenValid::class); -  It runs earlier, before other middleware
 
-        //Middleware Groups
+        // Middleware Groups
         $middleware->appendToGroup('auth-lookup', [
             SetLocale::class,
-            EnsureTokenValid::class
+            EnsureTokenValid::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

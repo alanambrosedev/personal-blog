@@ -27,7 +27,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    //Skip middleware for specific routes
+    // Skip middleware for specific routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->withoutMiddleware(EnsureTokenValid::class);
 
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -46,6 +46,5 @@ if (app()->environment('local')) {
         Route::resource('categories', Admin\CategoryController::class); // fi/admin/categories
     });
 }
-
 
 require __DIR__.'/auth.php';

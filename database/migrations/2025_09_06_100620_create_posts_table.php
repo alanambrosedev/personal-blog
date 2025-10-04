@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('category_id')->constrained();
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });
     }

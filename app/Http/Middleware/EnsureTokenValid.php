@@ -18,6 +18,7 @@ class EnsureTokenValid
         if ($request->input('token') !== 'my-secret-token') {
             return redirect('/');
         }
+
         return $next($request);
     }
 }

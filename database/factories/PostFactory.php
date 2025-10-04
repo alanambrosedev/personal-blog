@@ -18,6 +18,8 @@ class PostFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    protected $model = Post::class;
+
     public function definition(): array
     {
         return [
@@ -33,6 +35,26 @@ class PostFactory extends Factory
     {
         return $this->afterCreating(function (Post $post) {
             $post->tags()->attach(Tag::factory()->count(3)->create());
+        });
+    }
+
+    public function suspended()
+    {
+        return $this->state(fn () => [
+            'status' => 0,
+        ]);
+    }
+
+    // Factories can run code after making or after creating a model.
+    // automatically calls the configure() method if it exists.
+    public function configure()
+    {
+        return $this->afterMaking(function (Post $post) {
+            // run after the model is made (not saved)
+            $post->title = strtoupper($post->title);
+        })->afterCreating(function (Post $post) {
+            // run after the model is saved
+            $post->tags()->attach(Tag::factory()->count(2)->create());
         });
     }
 }
