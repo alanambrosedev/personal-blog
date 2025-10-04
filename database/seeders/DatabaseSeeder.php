@@ -67,8 +67,6 @@ class DatabaseSeeder extends Seeder
 
         // recycle() Reuses an existing model across multiple factories
         Post::factory()->count(2)->recycle($user)->create();
-
-        // Many to Many
-        Post::factory()->hasAttached(Tag::factory()->count(3))->create();
+        
     }
 }
