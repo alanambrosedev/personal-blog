@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Scopes\ActiveScope;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +18,15 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        /*
+        Removig Global scopes
+        User::withoutGlobalScope([ActiveScope::class, ActiveScope2::class])->get(); remove one scope defined by class if multiple then that one too (ignore array if single only)
+
+        User::withoutGlobalScope('isActive')->get(); remove the closure based scope
+        User::withoutGlobalScopes()->get(); remove all global scopes
+        User::withGlobalScopesExcept([Scope1::class,Scope2::class])->get();
+        */
+
         return view('profile.edit', [
             'user' => $request->user(),
         ]);
